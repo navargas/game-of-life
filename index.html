@@ -7,6 +7,7 @@
 }
 pre {
   font-size: 33px;
+  margin-top: 0px;
   line-height: 22.3px
 }
 h1 {
@@ -21,7 +22,7 @@ h1 {
 <script>
 
 var X = 'X';
-var O = '.';
+var O = '·';
 
 function countLiving(y,x,map) {
     var top         = [y-1,x];
@@ -33,7 +34,8 @@ function countLiving(y,x,map) {
     var topLeft     = [y-1,x-1];
     var bottomLeft  = [y+1,x-1];
 
-    var neighbor_values = [top,bottom,right,left,topRight,bottomRight,topLeft,bottomLeft];
+    var neighbor_values = [top,bottom,right,left,topRight,
+                           bottomRight,topLeft,bottomLeft];
 
     var neighbors_count = 0;
     for (var i = 0; i < neighbor_values.length; i++) {
@@ -88,12 +90,23 @@ var tests = {
         var mid =  {map:[[X,O,X],
                          [O,O,O],
                          [X,O,X]]};
-        var count = countLiving(0, 0, two.map);
-        if (count != 2) return 'Test 2 failed';
-        count = countLiving(0, 0, zero.map);
-        if (count != 0) return 'Test 0 failed';
-        count = countLiving(1, 1, mid.map);
-        if (count != 4) return 'Test middle failed';
+        if (countLiving(0, 0, two.map) != 2)
+            return 'Test for neighbors in corner failed';
+        if (countLiving(0, 0, zero.map) != 0)
+            return 'Testing for zero neighbors failed';
+        if (countLiving(1, 1, mid.map) != 4)
+            return 'Test middle failed';
+    },
+    map_string_size_correct: function() {
+        var state = {map:[[X,X,O],
+                          [X,O,O],
+                          [O,O,O]]};
+        var display = {innerHTML:''};
+        paintMap(display, state.map);
+        var xlen = state.map[0].length;
+        var ylen = state.map.length;
+        if (display.innerHTML.length != (xlen+1)*ylen)
+            return 'Invalid map length';
     }
 }
 
@@ -102,24 +115,27 @@ function runAllTests() {
     var state = {map:[]};
     populateMap(30, 27, state.map);
     for (var testName of Object.keys(tests)) {
-        console.log('Running', testName);
+        console.log('Testing', testName);
         var failed = tests[testName](state);
         if (failed) {
-            console.error('\tTest', testName, 'failed!!!', failed);
+            console.error('\tTest', testName, 'failed!', failed);
             failedCount++;
-        } else {
-            //console.log('\tTest Passed');
         }
     }
-    console.log('Finished');
     if (failedCount > 0)
-        console.error(failedCount + ' tests failed');
+        console.error('❌ ' + failedCount + ' test'
+            + (failedCount == 1 ? '' : 's') + ' failed');
+    else
+        console.log('✅ All tests passed successfully');
 }
 
 function runGame() {
+    var display = document.getElementById('display');
     var state = {map:[]};
-    populateMap(30, 27, state.map);
+    populateMap(27, 30, state.map);
+    paintMap(display, state.map);
 }
 
 runAllTests();
+runGame();
 </script>
