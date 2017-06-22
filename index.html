@@ -3,7 +3,7 @@
   width: 600px;
   margin: auto;
   height: 600px;
-  background-color: grey;
+  border: 1px solid black;
 }
 pre {
   font-size: 33px;
@@ -13,10 +13,113 @@ h1 {
   text-align: center;
 }
 </style>
-<h1>Our Game of Live</h1>
+<h1>Game of Life</h1>
 <div class="box">
 <pre id="display">
 </pre>
 </div>
 <script>
+
+var X = 'X';
+var O = '.';
+
+function countLiving(y,x,map) {
+    var top         = [y-1,x];
+    var bottom      = [y+1,x];
+    var right       = [y,x+1];
+    var left        = [y,x-1];
+    var topRight    = [y-1,x+1];
+    var bottomRight = [y+1,x+1];
+    var topLeft     = [y-1,x-1];
+    var bottomLeft  = [y+1,x-1];
+
+    var neighbor_values = [top,bottom,right,left,topRight,bottomRight,topLeft,bottomLeft];
+
+    var neighbors_count = 0;
+    for (var i = 0; i < neighbor_values.length; i++) {
+        var item = neighbor_values[i];
+        //console.log(item, item[0] >= map.length, item[1] >= map[0].length);
+        if (item[0] < 0 || item[1] < 0) continue;
+        if (item[0] >= map.length || item[1] >= map[0].length) continue;
+        var symbol = map[item[0]][item[1]];
+        if (symbol == X)
+            neighbors_count++;
+    }
+    return neighbors_count;
+}
+
+function populateMap(y,x,map) {
+    // Empty array
+    map.length = 0;
+    for(var i= 0; i<y; i++){
+        var row = [];
+        for(var j= 0; j<x; j++){
+            row.push(O);
+        }
+        map.push(row);
+    }
+}
+
+function paintMap(el, map) {
+    var displayString = '';
+    for (var y=0; y < map.length; y++) {
+        for (var x=0; x < map[y].length; x++) {
+            displayString += map[y][x];
+        }
+        displayString += '\n';
+    }
+    el.innerHTML = displayString;
+}
+
+var tests = {
+    map_not_empty: function(state) {
+        if (state.map.length == 0)
+          return true;
+        if (state.map[0].length == 0)
+          return true;
+    },
+    num_of_living_neighbors: function(){
+        var two =  {map:[[X,X,O],
+                         [X,O,O],
+                         [O,O,O]]};
+        var zero=  {map:[[X,O,X],
+                         [O,O,O],
+                         [X,O,O]]};
+        var mid =  {map:[[X,O,X],
+                         [O,O,O],
+                         [X,O,X]]};
+        var count = countLiving(0, 0, two.map);
+        if (count != 2) return 'Test 2 failed';
+        count = countLiving(0, 0, zero.map);
+        if (count != 0) return 'Test 0 failed';
+        count = countLiving(1, 1, mid.map);
+        if (count != 4) return 'Test middle failed';
+    }
+}
+
+function runAllTests() {
+    var failedCount = 0;
+    var state = {map:[]};
+    populateMap(30, 27, state.map);
+    for (var testName of Object.keys(tests)) {
+        console.log('Running', testName);
+        var failed = tests[testName](state);
+        if (failed) {
+            console.error('\tTest', testName, 'failed!!!', failed);
+            failedCount++;
+        } else {
+            //console.log('\tTest Passed');
+        }
+    }
+    console.log('Finished');
+    if (failedCount > 0)
+        console.error(failedCount + ' tests failed');
+}
+
+function runGame() {
+    var state = {map:[]};
+    populateMap(30, 27, state.map);
+}
+
+runAllTests();
 </script>
