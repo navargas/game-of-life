@@ -19,36 +19,4 @@ h1 {
 </pre>
 </div>
 <script>
-
-function createMap(x,y) {
-  var map = [];
-  for (var i = 0; i < x; i++) {
-    var row = [];
-    for (var j = 0; j < y; j++) {
-      row.push('X');   
-    }
-    map.push(row);
-  }
-  return map;
-}
-
-function displayCells(map, el) {
-  var result = '';
-  for (var y=0; y<map.length; y++) {
-    for (var x=0; x<map[y].length; x++) {
-      result += map[y][x]; 
-    }
-    result += '\n';
-  }
-  document.getElementById('display').innerHTML = result;
-}
-
-var map = createMap(27, 30);
-displayCells(map);
-
-// TESTS
-function test_ displayCells
-function allTests() {
-}
-
 </script>
